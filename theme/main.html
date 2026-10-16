@@ -1,0 +1,108 @@
+{% set is_library = page and page.file.src_uri in ['README.md', 'README.de.md'] %}
+{% macro doc_url(path) -%}{% set target = path|replace("README.md", "")|replace(".md", "/") %}{{ (("de/" if lang == "de" else "") + target)|url }}{%- endmacro %}
+{% macro icon(name, cls='') -%}
+<svg class="icon {{ cls }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+{% if name == 'search' %}<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/>
+{% elif name == 'arrow' %}<path d="M5 12h14m-6-6 6 6-6 6"/>
+{% elif name == 'external' %}<path d="M14 4h6v6m0-6L10 14M9 5H5a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-4"/>
+{% elif name == 'panel' %}<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11m4-7h4m-4 3h4"/>
+{% elif name == 'database' %}<ellipse cx="12" cy="5.5" rx="8" ry="3.5"/><path d="M4 5.5v13C4 20.4 7.6 22 12 22s8-1.6 8-3.5v-13M4 12c0 1.9 3.6 3.5 8 3.5s8-1.6 8-3.5"/>
+{% elif name == 'api' %}<path d="m8 6-6 6 6 6m8-12 6 6-6 6m-3-16-2 20"/>
+{% elif name == 'book' %}<path d="M12 5v15M3 3.5C7 3 9 3 12 5c3-2 5-2 9-1.5v15C17 18 15 18 12 20c-3-2-5-2-9-1.5Z"/>
+{% elif name == 'menu' %}<path d="M4 6h16M4 12h16M4 18h16"/>
+{% elif name == 'close' %}<path d="m6 6 12 12M6 18 18 6"/>
+{% elif name == 'chevron' %}<path d="m9 5 7 7-7 7"/>
+{% elif name == 'copy' %}<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/>
+{% endif %}</svg>
+{%- endmacro %}
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101214">
+  <meta name="description" content="{{ config.site_description }}">
+  <title>{% if page and not is_library %}{{ page.title }} · {% endif %}{{ config.site_name }}</title>
+  {% if page and page.canonical_url %}<link rel="canonical" href="{{ page.canonical_url }}">{% endif %}
+  <link rel="icon" href="{{ 'assets/mark.svg'|url }}" type="image/svg+xml">
+  <link rel="preload" href="{{ 'assets/fonts/space-grotesk.ttf'|url }}" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="{{ 'assets/docs.css'|url }}">
+  <script src="{{ 'assets/docs.js'|url }}" defer></script>
+  {% for alternate in locale_links %}<link rel="alternate" hreflang="{{ alternate.lang }}" href="{{ alternate.url|url }}">{% endfor %}
+</head>
+<body data-locale="{{ lang }}" class="{% if is_library %}is-home{% else %}is-guide{% endif %}" data-root="{{ base_url }}/">
+<script type="application/json" id="locale-strings">{{ ui_strings|tojson }}</script>
+<!-- THESIS: a resource library for independent BlackICE tools, with a dedicated relationship only between the database pair.
+OWN-WORLD: graphite surfaces, acid yellow navigation, cyan links, Space Grotesk headings, Plex Sans reading text, cut-corner brand mark.
+STORY: find a resource, inspect its requirements, open its guide or reference.
+FIRST VIEWPORT: compact header; grouped navigation on the left; broad library title and three editorial resource rows; no forced stack diagram.
+FORM: brief-pinned cyberpunk documentation workspace; seed a64120cb. FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md -->
+<a class="skip-link" href="#main">{{ t("Skip to content") }}</a>
+<header class="site-header">
+  <button class="icon-button menu-toggle" aria-label="{{ t("Open navigation") }}" aria-controls="site-nav" aria-expanded="false">{{ icon('menu') }}</button>
+  <a class="brand" href="{{ nav.homepage.url|url }}" aria-label="{{ t("LandminenTester documentation home") }}">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 4h7v17h17v7H4Z" fill="currentColor"/><path d="M15 4h13v7h-6v7h-7Z" fill="currentColor"/></svg>
+    <span>LandminenTester<span class="brand-docs"> / docs</span></span>
+  </a>
+  <nav class="language-switch" aria-label="{{ t('Language') }}">{% for alternate in locale_links %}<a href="{{ alternate.url|url }}" lang="{{ alternate.lang }}" hreflang="{{ alternate.lang }}" aria-label="{{ alternate.name }}"{% if alternate.lang == lang %} aria-current="true"{% endif %}><span class="language-name">{{ alternate.name }}</span><span class="language-code" aria-hidden="true">{{ alternate.lang|upper }}</span></a>{% endfor %}</nav>
+  <div class="header-links"><a href="{{ nav.homepage.url|url }}#resources">{{ t("Resources") }}</a><a href="{{ doc_url('getting-started.md') }}">{{ t("Getting started") }}</a></div>
+  <button class="search-trigger" data-search-open aria-label="{{ t("Search documentation") }}">{{ icon('search') }}<span>{{ t("Search docs") }}</span><kbd>Ctrl K</kbd></button>
+  <a class="github-link" href="{{ config.repo_url }}" aria-label="{{ t("Documentation on GitHub") }}">GitHub {{ icon('external') }}</a>
+</header>
+<button class="nav-scrim" aria-label="{{ t("Close navigation") }}" tabindex="-1"></button>
+<aside class="sidebar" id="site-nav" aria-label="{{ t("Documentation navigation") }}">
+  <a class="library-link{% if is_library %} active{% endif %}" href="{{ nav.homepage.url|url }}"{% if is_library %} aria-current="page"{% endif %}>{{ icon('book') }}{{ t("Resource library") }}</a>
+  <nav>
+  {% for group in nav %}
+    {% if group.children %}
+    <details class="nav-group"{% if group.active %} open{% endif %}>
+      <summary>{{ group.title }}{{ icon('chevron') }}</summary>
+      <ul>{% for item in group.children %}{% if item.file.src_uri not in ['README.md', 'README.de.md'] %}<li><a href="{{ item.url|url }}"{% if item.active %} class="active" aria-current="page"{% endif %}>{{ item.title }}</a></li>{% endif %}{% endfor %}</ul>
+    </details>
+    {% endif %}
+  {% endfor %}
+  </nav>
+  <div class="sidebar-footer"><span class="small-mark"></span>{{ t("Built for BlackICE") }}<a href="{{ doc_url('sources.md') }}">{{ t("Sources & maintenance") }} {{ icon('external') }}</a></div>
+</aside>
+<div class="workspace">
+<main id="main" tabindex="-1">
+{% if is_library %}
+  <section class="library-intro">
+    <h1>{{ t("BlackICE resources.") }}<br><span>{{ t("All in one place.") }}</span></h1>
+    <p>{{ t("Documentation for the tools you run.") }}<br>{{ t("Find a resource. Make it yours.") }}</p>
+    <a class="text-action" href="{{ doc_url('getting-started.md') }}">{{ t("New here? Start with the basics") }} {{ icon('arrow') }}</a>
+    <div class="intro-motif" aria-hidden="true"><svg viewBox="0 0 180 140"><path d="M20 22h75l60 60v36H80L20 58Z"/><path d="M20 22v36l60 60V82ZM80 82h75M95 22v36h60M80 82l15-24"/><path class="motif-highlight" d="M20 22h75l60 60"/></svg></div>
+  </section>
+  <section id="resources" class="resource-section" aria-labelledby="resource-heading">
+    <div class="section-heading"><h2 id="resource-heading">{{ t("Explore the library") }}</h2><span>{{ config.extra.resources|length }} {{ t("resources") }}</span></div>
+    <div class="resource-list">
+    {% for resource in config.extra.resources %}
+      <article class="resource-row">
+        <div class="resource-icon {{ resource.icon }}">{{ icon(resource.icon) }}</div>
+        <div class="resource-info"><h3><a href="{{ doc_url(resource.path) }}">{{ resource.name }}</a></h3><div class="resource-kind">{{ t(resource.kind) }}</div><p>{{ t(resource.description) }}</p><div class="resource-links"><a href="{{ doc_url(resource.guide) }}">{% if resource.icon == 'panel' %}{{ t("Operations guide") }}{% else %}{{ t("Installation guide") }}{% endif %} {{ icon('arrow') }}</a><a href="{{ doc_url(resource.reference) }}">{{ t("API reference") }} {{ icon('arrow') }}</a></div></div>
+        <div class="resource-meta"><span>{{ t(resource.relation) }}</span><a class="icon-button" href="{{ doc_url(resource.path) }}" aria-label="{{ t('Open documentation') }}: {{ resource.name }}">{{ icon('arrow') }}</a></div>
+      </article>
+    {% endfor %}
+    </div>
+  </section>
+  <section class="library-help"><div><h2>{{ t("Pick what your server needs.") }}</h2><p>{{ t("Each resource has its own setup, configuration and reference. Requirements are documented where they belong.") }}</p></div><a href="{{ doc_url('sources.md') }}">{{ t("How these docs are maintained") }} {{ icon('arrow') }}</a></section>
+{% else %}
+  <div class="guide-layout">
+    <article class="document">
+      <div class="breadcrumbs"><a href="{{ nav.homepage.url|url }}">{{ t("Resources") }}</a>{{ icon('chevron') }}{% if page and page.parent %}<span>{{ page.parent.title }}</span>{% else %}<span>{{ t("Guide") }}</span>{% endif %}</div>
+      {% if page %}{% if i18n_file_locale != lang %}<p class="locale-notice">{{ t("This technical reference is currently available in English.") }}</p>{% endif %}{{ page.content }}{% else %}<h1>{{ t("Page not found") }}</h1><p>{{ t("Choose a resource from the navigation, or search the documentation.") }}</p>{% endif %}
+      {% if page %}<nav class="page-pagination" aria-label="{{ t("Previous and next guides") }}">{% if page.previous_page %}<a href="{{ page.previous_page.url|url }}"><span>{{ t("Previous") }}</span><strong>{{ page.previous_page.title }}</strong></a>{% endif %}{% if page.next_page %}<a class="next" href="{{ page.next_page.url|url }}"><span>{{ t("Next") }}</span><strong>{{ page.next_page.title }} {{ icon('arrow') }}</strong></a>{% endif %}</nav>{% endif %}
+    </article>
+    {% if page and page.toc %}<aside class="page-index" aria-label="{{ t("On this page") }}"><h2>{{ t("On this page") }}</h2><nav>{% for heading in page.toc %}{% if heading.children %}{% for section in heading.children %}<a href="{{ section.url }}">{{ section.title }}</a>{% endfor %}{% else %}<a href="{{ heading.url }}">{{ heading.title }}</a>{% endif %}{% endfor %}</nav><a class="source-link" href="{{ config.repo_url }}/blob/main/content/{{ page.file.src_uri }}">{{ t("View source") }} {{ icon('external') }}</a></aside>{% endif %}
+  </div>
+{% endif %}
+<footer class="site-footer"><span>LandminenTester <span class="footer-slash">/</span> {{ t("BlackICE resources") }}</span><a href="{{ config.repo_url }}">{{ t("Open documentation") }} {{ icon('external') }}</a></footer>
+</main>
+</div>
+<dialog class="search-dialog" aria-labelledby="search-title">
+  <div class="search-header">{{ icon('search') }}<label class="sr-only" id="search-title" for="docs-search">{{ t("Search documentation") }}</label><input id="docs-search" type="search" placeholder="{{ t("Search resources, guides, APIs…") }}" autocomplete="off" spellcheck="false"><button class="icon-button" data-search-close aria-label="{{ t("Close search") }}">{{ icon('close') }}</button></div>
+  <div class="search-results" aria-live="polite"><p class="search-message">{{ t("Type to search the documentation.") }}</p></div>
+  <div class="search-footer"><span>{{ t("Search the resource library") }}</span><span><kbd>Esc</kbd> {{ t("to close") }}</span></div>
+</dialog>
+</body>
+</html>

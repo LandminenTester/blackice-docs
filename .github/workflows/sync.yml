@@ -1,0 +1,42 @@
+name: Sync product documentation
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: LandminenTester/blackice-server-panel
+          path: .sources/panel
+      - uses: actions/checkout@v4
+        with:
+          repository: LandminenTester/lt-database
+          path: .sources/bundle
+      - uses: actions/checkout@v4
+        with:
+          repository: LandminenTester/lt-database-api
+          path: .sources/api
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - run: python scripts/sync_docs.py --panel .sources/panel --bundle .sources/bundle --api .sources/api
+      - run: python scripts/build_navigation.py
+      - run: mkdocs build --strict
+      - run: python scripts/check_docs.py
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: docs/sync-products
+          commit-message: Sync public product documentation
+          title: Sync public product documentation
+          body: Imports the current public product documentation. The source revisions are recorded in content/sources.json; the strict site build passed.
+          add-paths: |
+            content
+            mkdocs.yml

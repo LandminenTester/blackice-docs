@@ -1,0 +1,35 @@
+[
+  {
+    "name": "BlackICE Server Panel",
+    "kind": "Server management",
+    "description": "Manage your server, console, users and bundles from one web interface.",
+    "icon": "panel",
+    "path": "webpanel/README.md",
+    "guide": "webpanel/docs/operations.md",
+    "reference": "webpanel/API.md",
+    "repository": "https://github.com/LandminenTester/blackice-server-panel",
+    "relation": "Independent resource"
+  },
+  {
+    "name": "lt_database",
+    "kind": "Server bundle",
+    "description": "Declare schemas and read or write database records directly from your server bundles.",
+    "icon": "database",
+    "path": "lt-database/README.md",
+    "guide": "lt-database/docs/INSTALL.md",
+    "reference": "lt-database/docs/REFERENCE.md",
+    "repository": "https://github.com/LandminenTester/lt-database",
+    "relation": "Requires lt-database-api"
+  },
+  {
+    "name": "lt-database-api",
+    "kind": "Database service",
+    "description": "A signed HTTP API for PostgreSQL, MySQL and MongoDB. The backend for lt_database.",
+    "icon": "api",
+    "path": "lt-database-api/README.md",
+    "guide": "lt-database-api/docs/DEPLOYMENT.md",
+    "reference": "lt-database-api/docs/API.md",
+    "repository": "https://github.com/LandminenTester/lt-database-api",
+    "relation": "Used by lt_database"
+  }
+]

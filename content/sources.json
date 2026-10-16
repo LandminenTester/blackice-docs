@@ -1,0 +1,71 @@
+{
+  "webpanel": {
+    "repository": "LandminenTester/blackice-server-panel",
+    "commit": "373cd3962172771d1f0c5b8ca077529b5917a15f",
+    "files": [
+      "LICENSE",
+      "README.de.md",
+      "README.md",
+      "SECURITY.md",
+      "docs/bridge.md",
+      "docs/building.md",
+      "docs/bundle-tools.md",
+      "docs/development.md",
+      "docs/docker.md",
+      "docs/linux.md",
+      "docs/operations.md",
+      "docs/releases/v1.5.0-experimental.2.md",
+      "docs/screenshots/02-setup-server.png",
+      "docs/screenshots/03-dashboard.png",
+      "docs/screenshots/04-console.png",
+      "docs/screenshots/05-log-archive.png",
+      "docs/screenshots/07-settings-general.png",
+      "docs/screenshots/08-settings-updates.png",
+      "docs/screenshots/09-settings-server-config.png",
+      "docs/screenshots/11-users.png",
+      "docs/server-config.md",
+      "docs/server-updates.md",
+      "docs/updates.md",
+      "docs/users.md",
+      "docs/windows.md"
+    ]
+  },
+  "lt-database": {
+    "repository": "LandminenTester/lt-database",
+    "commit": "33fa02c95150cd4dcf1020329618b4b4363fcceb",
+    "files": [
+      "LICENSE",
+      "NOTICE.md",
+      "README.md",
+      "docs/BUILD.md",
+      "docs/CONFIGURATION.md",
+      "docs/EXAMPLES.md",
+      "docs/INSTALL.md",
+      "docs/OPERATIONS.md",
+      "docs/REFERENCE.md",
+      "docs/SECURITY.md",
+      "docs/USAGE.md",
+      "examples/consumer/PlayerPreferences.cs",
+      "examples/smoke/README.md"
+    ]
+  },
+  "lt-database-api": {
+    "repository": "LandminenTester/lt-database-api",
+    "commit": "af0736fc5055d62d795a9c258c227cac6552e73a",
+    "files": [
+      "LICENSE",
+      "README.md",
+      "SECURITY.md",
+      "docs/API.md",
+      "docs/ARCHITECTURE.md",
+      "docs/BUILD.md",
+      "docs/BUNDLE-INTEGRATION.md",
+      "docs/DEPLOYMENT.md",
+      "docs/SCHEMA.md",
+      "docs/SECURITY.md",
+      "docs/WRITE-BEHIND.md",
+      "docs/openapi.yaml",
+      "tools/ldb_client.py"
+    ]
+  }
+}

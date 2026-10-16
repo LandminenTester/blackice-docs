@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-15T23:57:56Z",
+  "title": "Design System: LandminenTester documentation",
+  "extensions": {
+    "colorMeta": {
+      "acid": {"role": "primary", "displayName": "Acid yellow wayfinding"},
+      "cyan": {"role": "secondary", "displayName": "Cyan reading links"},
+      "canvas": {"role": "neutral", "displayName": "Graphite canvas"},
+      "rail": {"role": "neutral", "displayName": "Graphite navigation rail"},
+      "surface": {"role": "neutral", "displayName": "Raised tonal surface"}
+    },
+    "typographyMeta": {
+      "display": {"displayName": "Library display", "purpose": "Library introduction heading; responsive overrides in docs.css."},
+      "headline": {"displayName": "Article headline", "purpose": "Guide page h1."},
+      "body": {"displayName": "Article reading text", "purpose": "Long-form documentation, capped at 75ch on desktop."}
+    },
+    "shadows": [
+      {"name": "search-modal", "value": "0 22px 80px #0009", "purpose": "Separate modal search from the workspace."}
+    ],
+    "motion": [
+      {"name": "group-chevron", "value": "transform 0.16s ease-out", "purpose": "Native details group open/closed indicator."},
+      {"name": "mobile-drawer", "value": "transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Mobile navigation entry and exit."},
+      {"name": "reduced-motion", "value": "transition: none !important; animation: none !important; scroll-behavior: auto", "purpose": "Reduced-motion preference disables movement."}
+    ],
+    "breakpoints": [
+      {"name": "wide-min", "value": "1600px"},
+      {"name": "compact-max", "value": "1250px"},
+      {"name": "article-index-max", "value": "1080px"},
+      {"name": "drawer-max", "value": "820px"},
+      {"name": "small-phone-max", "value": "390px"}
+    ],
+    "focus": {"value": "2px solid var(--acid)", "offset": "5px", "purpose": "Visible keyboard focus for links, buttons, summaries and inputs."},
+    "source": {"stylesheet": "content/assets/docs.css", "behavior": "content/assets/docs.js", "template": "theme/main.html", "directionSeed": "a64120cb"}
+  },
+  "components": [
+    {
+      "name": "Icon button", "kind": "button", "refersTo": "icon-button",
+      "description": "Outlined compact action with acid hover emphasis.",
+      "html": "<button class=\"ds-icon-button\" aria-label=\"Open resource\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\"/></svg></button>",
+      "css": ".ds-icon-button{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--line,#2c3337);border-radius:6px;background:transparent;color:var(--ink,#eef0eb);cursor:pointer}.ds-icon-button:hover{background:var(--surface-hover,#23292d);color:var(--acid,#dfff00)}.ds-icon-button:focus-visible{outline:2px solid var(--acid,#dfff00);outline-offset:5px}"
+    },
+    {
+      "name": "Search trigger", "kind": "button", "refersTo": "search-trigger",
+      "description": "Desktop search entry with a shortcut hint.",
+      "html": "<button class=\"ds-search-trigger\"><span>Search docs</span><kbd>Ctrl K</kbd></button>",
+      "css": ".ds-search-trigger{display:flex;align-items:center;gap:10px;width:244px;min-height:38px;padding:8px 11px;border:1px solid var(--line,#2c3337);border-radius:6px;background:var(--rail,#141719);color:var(--muted,#a5afb2);font:13px var(--body,'IBM Plex Sans',sans-serif);text-align:left;cursor:pointer}.ds-search-trigger kbd{margin-left:auto;border:1px solid var(--line,#2c3337);border-radius:4px;padding:1px 5px;font:11px var(--body,'IBM Plex Sans',sans-serif)}.ds-search-trigger:hover{border-color:var(--quiet,#929ea2);color:var(--ink,#eef0eb)}.ds-search-trigger:focus-visible{outline:2px solid var(--acid,#dfff00);outline-offset:5px}"
+    },
+    {
+      "name": "Search input", "kind": "input",
+      "description": "Transparent field on the dark modal surface.",
+      "html": "<div class=\"ds-search-field\"><input type=\"search\" aria-label=\"Search documentation\" placeholder=\"Search resources, guides, APIs…\"></div>",
+      "css": ".ds-search-field{background:var(--rail,#141719);padding:16px 18px;border-bottom:1px solid var(--line,#2c3337)}.ds-search-field input{background:transparent;color:var(--ink,#eef0eb);border:0;min-width:0;width:100%;padding:4px;font:16px var(--body,'IBM Plex Sans',sans-serif);caret-color:var(--acid,#dfff00)}.ds-search-field input::placeholder{color:var(--quiet,#929ea2)}.ds-search-field input:focus-visible{outline:2px solid var(--acid,#dfff00);outline-offset:5px}"
+    },
+    {
+      "name": "Resource navigation", "kind": "nav", "refersTo": "navigation-link",
+      "description": "Muted guide links with acid active-page marker.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Resource guides\"><a href=\"#overview\" aria-current=\"page\">Overview</a><a href=\"#install\">Install</a><a href=\"#reference\">API reference</a></nav>",
+      "css": ".ds-nav{background:var(--rail,#141719);padding:12px}.ds-nav a{display:block;padding:7px 12px;border-left:1px solid transparent;color:var(--muted,#a5afb2);font:13px/1.5 var(--body,'IBM Plex Sans',sans-serif);text-decoration:none}.ds-nav a:hover{color:var(--ink,#eef0eb);background:var(--surface,#1a1e21)}.ds-nav a[aria-current]{color:var(--acid,#dfff00);border-left-color:var(--acid,#dfff00);background:#20251c}.ds-nav a:focus-visible{outline:2px solid var(--acid,#dfff00);outline-offset:5px}"
+    },
+    {
+      "name": "Search result", "kind": "custom", "refersTo": "search-result",
+      "description": "Title, excerpt and cyan location in a compact actionable row.",
+      "html": "<a class=\"ds-result\" href=\"#install\"><strong>Install</strong><span>Install and configure the resource for your server.</span><span class=\"ds-path\">lt-database / docs / INSTALL</span></a>",
+      "css": ".ds-result{display:block;background:var(--rail,#141719);padding:15px 17px;border-radius:5px;text-decoration:none;color:var(--ink,#eef0eb)}.ds-result strong{display:block;font:500 15px var(--display,'Space Grotesk',sans-serif);margin:0 0 6px}.ds-result span{display:block;color:var(--muted,#a5afb2);font:12px/1.6 var(--body,'IBM Plex Sans',sans-serif);overflow-wrap:anywhere}.ds-result .ds-path{font-size:10px;color:var(--cyan,#78d9df);margin-top:8px}.ds-result:hover,.ds-result:focus-visible{background:var(--surface-hover,#23292d)}.ds-result:focus-visible{outline:2px solid var(--acid,#dfff00);outline-offset:5px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The BlackICE resource workspace",
+    "overview": "The shipped world is sleek cyberpunk: graphite surfaces, acid yellow wayfinding, cyan reading links, precise display type and calm long-form text. Its character comes from typography, thin divisions and the angular brand mark; the documentation stays readable and practical.\n\nThis system describes the custom MkDocs theme deployed on GitHub Pages. Source Markdown remains compatible with GitBook Git Sync; the theme does not style the GitBook account. The direction contract is recorded in `theme/main.html` (seed `a64120cb`).",
+    "keyCharacteristics": ["Dark tonal layers with restrained accent color.", "Grouped resource navigation and spacious directory rows.", "Technical content with clear reading links, code and source attribution."],
+    "rules": [{"name": "The Wayfinding Rule", "body": "Preserve acid for navigation and interaction emphasis, and cyan for reading links.", "section": "colors"}],
+    "dos": ["Do preserve the graphite, acid and cyan role separation.", "Do keep long-form reading in IBM Plex Sans with contained code and table overflow.", "Do preserve keyboard focus, modal behavior and reduced-motion states.", "Do extend resource navigation without implying dependency on the panel."],
+    "donts": ["Don't replace directory rows with nested decorative cards.", "Don't use the display font for long reading passages.", "Don't imply that the custom GitHub Pages theme changes GitBook styling."]
+  }
+}
