@@ -1,6 +1,7 @@
 """Generate GitBook and MkDocs navigation from one shared manifest."""
 import json
 from pathlib import Path
+from navigation_model import leaves, mkdocs_items, summary_items
 
 root = Path(__file__).resolve().parents[1]
 navigation = json.loads((root / "navigation.json").read_text(encoding="utf-8"))
@@ -13,18 +14,18 @@ summary = ["# Summary", ""]
 nav = []
 for group, pages in navigation.items():
     summary += [f"## {group}", ""]
-    nav.append({group: [{label: path} for label, path in pages.items()]})
-    for label, path in pages.items():
+    nav.append({group: mkdocs_items(pages)})
+    for label, path in leaves(pages):
         if not (root / "content" / path).is_file():
             raise SystemExit(f"Navigation target missing: {path}")
-        summary.append(f"* [{label}]({path})")
+    summary.extend(summary_items(pages))
     summary.append("")
 (root / "content/SUMMARY.md").write_text("\n".join(summary), encoding="utf-8")
 de_labels = json.loads((root / "locales/nav.de.json").read_text(encoding="utf-8"))
 de_summary = ["# Inhalt", ""]
 for group, pages in navigation.items():
     de_summary += ["## " + de_labels.get(group, group), ""]
-    de_summary += [f"* [{de_labels.get(label,label)}]({Path(path).with_name(Path(path).stem+'.de.md').as_posix()})" for label,path in pages.items()]
+    de_summary += summary_items(pages,de_labels,german_files=True)
     de_summary.append("")
 (root / "content/SUMMARY.de.md").write_text("\n".join(de_summary), encoding="utf-8")
 config = {
@@ -51,4 +52,4 @@ config = {
     "validation": {"links": {"not_found": "warn", "unrecognized_links": "warn", "anchors": "warn"}},
 }
 (root / "mkdocs.yml").write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
-print(f"Generated navigation for {sum(map(len, navigation.values()))} pages")
+print(f"Generated navigation for {len(list(leaves(navigation)))} pages")

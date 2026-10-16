@@ -37,6 +37,8 @@ Open the local URL printed by MkDocs. CI performs the same checks and publishes 
 
 To add a page, write both language versions, add its navigation entry and translated label, regenerate navigation, build and run checks. Keep code/configuration identifiers unchanged. Preserve explicit anchors used by other pages. CI checks that the C# walkthrough in both languages matches the compiled consumer source.
 
+Navigation supports nested objects in `navigation.json`: resource → topic → pages. Topic sections are collapsible in the sidebar, and their sibling pages appear as links above each article. Active ancestors open automatically. The selected page remains visible when its tab strip scrolls on a narrow screen. Use the same structure for new resources; do not hand-code page tabs in the theme.
+
 ## Sync product documentation
 
 Commit product changes first; the importer refuses dirty sources:

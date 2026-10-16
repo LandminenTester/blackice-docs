@@ -3,6 +3,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlsplit, unquote
 import json, posixpath, re
+from navigation_model import leaves, sibling_groups
 
 ROOT=Path(__file__).resolve().parents[1]
 CONTENT=ROOT/'content'
@@ -12,6 +13,7 @@ class Page(HTMLParser):
     def __init__(self,text):
         super().__init__(convert_charrefs=True)
         self.links=[];self.ids=set();self.lang=None;self.locale_links={};self.in_switch=False
+        self.in_tabs=False;self.tabs=[]
         self.feed(text)
     def handle_starttag(self,tag,attrs):
         a=dict(attrs)
@@ -21,8 +23,10 @@ class Page(HTMLParser):
             if attr in a:self.links.append(a[attr])
         if tag=='nav' and a.get('class')=='language-switch':self.in_switch=True
         if self.in_switch and tag=='a':self.locale_links[a.get('lang')]=a.get('href')
+        if tag=='nav' and a.get('class')=='page-tabs':self.in_tabs=True
+        if self.in_tabs and tag=='a':self.tabs.append(a)
     def handle_endtag(self,tag):
-        if tag=='nav':self.in_switch=False
+        if tag=='nav':self.in_switch=False;self.in_tabs=False
 
 def route(name):
     return re.sub(r'(?:README|index)\.md$','',name).replace('.md','/')
@@ -30,7 +34,9 @@ def route(name):
 def check():
     errors=[]
     nav=json.loads((ROOT/'navigation.json').read_text(encoding='utf-8'))
-    names=[path for group in nav.values() for path in group.values()]
+    names=[path for label,path in leaves(nav)]
+    tab_groups={path:group for group in sibling_groups(nav) for path in group}
+    if len(names)!=len(set(names)):errors.append('A document appears more than once in navigation')
     pages={p.relative_to(SITE).as_posix():Page(p.read_text(encoding='utf-8')) for p in SITE.rglob('*.html')}
     for name in names:
         p=CONTENT/name;de=p.with_name(p.stem+'.de.md')
@@ -44,6 +50,11 @@ def check():
             page=pages.get(target)
             if not page: errors.append('Missing output: '+target);continue
             if page.lang!=locale:errors.append('Wrong HTML language: '+target)
+            if name in tab_groups:
+                expected_tabs={'/'+prefix+route(path) for path in tab_groups[name]}
+                actual_tabs={posixpath.normpath(posixpath.join('/'+posixpath.dirname(target),a['href']))+'/' for a in page.tabs}
+                if actual_tabs!=expected_tabs:errors.append('Incorrect related-page tabs: '+target)
+                if sum(a.get('aria-current')=='page' for a in page.tabs)!=1:errors.append('Expected one active page tab: '+target)
             for other in ('en','de'):
                 href=page.locale_links.get(other)
                 expected=('/de/' if other=='de' else '/')+route(name)

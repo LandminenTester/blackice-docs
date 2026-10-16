@@ -15,6 +15,15 @@
 {% elif name == 'copy' %}<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/>
 {% endif %}</svg>
 {%- endmacro %}
+{% macro nav_items(items) -%}
+<ul>{% for item in items %}
+  {% if item.children %}
+  <li><details class="nav-section"{% if item.active %} open{% endif %}><summary>{{ item.title }}{{ icon('chevron') }}</summary>{{ nav_items(item.children) }}</details></li>
+  {% elif item.file.src_uri not in ['README.md', 'README.de.md'] %}
+  <li><a href="{{ item.url|url }}"{% if item.active %} class="active" aria-current="page"{% endif %}>{{ item.title }}</a></li>
+  {% endif %}
+{% endfor %}</ul>
+{%- endmacro %}
 <!doctype html>
 <html lang="{{ lang }}">
 <head>
@@ -57,7 +66,7 @@ FORM: brief-pinned cyberpunk documentation workspace; seed a64120cb. FINISH: unr
     {% if group.children %}
     <details class="nav-group"{% if group.active %} open{% endif %}>
       <summary>{{ group.title }}{{ icon('chevron') }}</summary>
-      <ul>{% for item in group.children %}{% if item.file.src_uri not in ['README.md', 'README.de.md'] %}<li><a href="{{ item.url|url }}"{% if item.active %} class="active" aria-current="page"{% endif %}>{{ item.title }}</a></li>{% endif %}{% endfor %}</ul>
+      {{ nav_items(group.children) }}
     </details>
     {% endif %}
   {% endfor %}
@@ -89,7 +98,8 @@ FORM: brief-pinned cyberpunk documentation workspace; seed a64120cb. FINISH: unr
 {% else %}
   <div class="guide-layout">
     <article class="document">
-      <div class="breadcrumbs"><a href="{{ nav.homepage.url|url }}">{{ t("Resources") }}</a>{{ icon('chevron') }}{% if page and page.parent %}<span>{{ page.parent.title }}</span>{% else %}<span>{{ t("Guide") }}</span>{% endif %}</div>
+      <div class="breadcrumbs"><a href="{{ nav.homepage.url|url }}">{{ t("Resources") }}</a>{% for ancestor in page_ancestors %}{{ icon('chevron') }}<span>{{ ancestor.title }}</span>{% endfor %}</div>
+      {% if related_pages %}<nav class="page-tabs" aria-label="{{ page.parent.title }}">{% for sibling in related_pages %}<a href="{{ sibling.url|url }}"{% if sibling.active %} aria-current="page"{% endif %}>{{ sibling.title }}</a>{% endfor %}</nav>{% endif %}
       {% if page %}{% if i18n_file_locale != lang %}<p class="locale-notice">{{ t("This technical reference is currently available in English.") }}</p>{% endif %}{{ page.content }}{% else %}<h1>{{ t("Page not found") }}</h1><p>{{ t("Choose a resource from the navigation, or search the documentation.") }}</p>{% endif %}
       {% if page %}<nav class="page-pagination" aria-label="{{ t("Previous and next guides") }}">{% if page.previous_page %}<a href="{{ page.previous_page.url|url }}"><span>{{ t("Previous") }}</span><strong>{{ page.previous_page.title }}</strong></a>{% endif %}{% if page.next_page %}<a class="next" href="{{ page.next_page.url|url }}"><span>{{ t("Next") }}</span><strong>{{ page.next_page.title }} {{ icon('arrow') }}</strong></a>{% endif %}</nav>{% endif %}
     </article>

@@ -19,4 +19,13 @@ def on_page_context(context, page, config, nav):
     context['t']=lambda value: translations.get(value,value) if lang=='de' else value
     context['locale_links']=[{'lang':locale,'name':name,'url':page.file.alternates[locale].url}
         for locale,name in [('en','English'),('de','Deutsch')] if locale in page.file.alternates]
+    ancestors=[]
+    parent=page.parent
+    while parent:
+        ancestors.append(parent)
+        parent=parent.parent
+    context['page_ancestors']=list(reversed(ancestors))
+    # These are links between documents, not JavaScript tab panels.
+    context['related_pages']=(page.parent.children if page.parent and page.parent.parent
+        and all(not getattr(item,'children',None) for item in page.parent.children) else [])
     return context

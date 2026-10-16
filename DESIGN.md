@@ -155,6 +155,12 @@ The mobile drawer makes closed navigation inert, focuses its first link on openi
 
 Icon buttons are compact, outlined and transparent, with a tonal hover surface and acid icon. Search has a wider labeled trigger on desktop and an icon trigger on mobile. Links, buttons, inputs and summaries receive an acid (2px) `:focus-visible` outline offset by (5px). A keyboard-visible skip link reaches the main content. Disabled buttons use a waiting cursor and reduced opacity.
 
+### Topic groups and related pages
+
+Resource navigation contains nested native `details` sections grouped by installation, use and maintenance. Active ancestors open automatically; other topic sections start collapsed. The topic headings retain normal casing and use a 40px minimum target. Child links are indented by 12px. Chevron rotation applies only to each details element's own summary.
+
+Each article in a topic has a horizontal list of ordinary links to sibling documents, with one acid underline and `aria-current="page"`. These navigate documents rather than changing JavaScript tab panels. Strips scroll horizontally without causing page overflow, keep the selected link visible, and have 44px minimum link targets. Breadcrumbs show the full resource/topic path. The same navigation tree generates English/German site navigation and GitBook summaries.
+
 ### Search
 
 A native modal `dialog` contains the transparent search input, result links and keyboard hint. Ctrl/Cmd K or `/` opens it; Escape, the close button or a backdrop click closes it. Opening focuses the field; closing restores the trigger. Arrow Down enters results; Up/Down navigates results, with Up from the first returning to the field. Native modal behavior supplies the modal focus boundary.

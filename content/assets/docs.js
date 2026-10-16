@@ -3,6 +3,14 @@
   const strings = JSON.parse(document.querySelector("#locale-strings").textContent);
   const t = (text) => strings[text] || text;
   const locale = document.documentElement.lang;
+  // Keep the selected document visible in an overflowing related-page strip.
+  // Only move the strip horizontally; preserve document/anchor scroll position.
+  const pageTabs = document.querySelector('.page-tabs');
+  const currentTab = pageTabs?.querySelector('[aria-current="page"]');
+  if (currentTab) {
+    const start = currentTab.getBoundingClientRect().left - pageTabs.getBoundingClientRect().left + pageTabs.scrollLeft;
+    pageTabs.scrollLeft = Math.max(0, start - (pageTabs.clientWidth - currentTab.offsetWidth) / 2);
+  }
   const root = new URL(document.body.dataset.root, location.href);
   const dialog = document.querySelector(".search-dialog");
   const input = document.querySelector("#docs-search");

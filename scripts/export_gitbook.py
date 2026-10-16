@@ -1,6 +1,7 @@
 """Export ordinary Markdown trees for separate English/German GitBook spaces."""
 from pathlib import Path
 import json, re, shutil
+from navigation_model import summary_items
 
 ROOT=Path(__file__).resolve().parents[1]
 CONTENT=ROOT/'content'
@@ -31,7 +32,7 @@ for locale in ('en','de'):
     summary=['# Summary' if locale=='en' else '# Inhalt','']
     for group,pages in navigation.items():
         summary+=['## '+(labels.get(group,group) if locale=='de' else group),'']
-        summary += ['* ['+(labels.get(label,label) if locale=='de' else label)+']('+path+')' for label,path in pages.items()]
+        summary += summary_items(pages,labels if locale=='de' else {})
         summary+=['']
     (dest/'SUMMARY.md').write_text('\n'.join(summary),encoding='utf-8')
     (dest/'.gitbook.yaml').write_text('root: ./\nstructure:\n  readme: README.md\n  summary: SUMMARY.md\n',encoding='utf-8')

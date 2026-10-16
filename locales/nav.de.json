@@ -1,5 +1,6 @@
 {
   "Start": "Start",
+  "Operations": "Betrieb",
   "Resource library": "Ressourcenbibliothek",
   "Getting started": "Erste Schritte",
   "Sources and maintenance": "Quellen und Pflege",
@@ -37,5 +38,12 @@
   "Client and bundle integration": "Client- und Bundle-Anbindung",
   "Architecture and development": "Architektur und Entwicklung",
   "Security reporting": "Sicherheitsprobleme melden",
-  "Glossary": "Begriffe und Abkürzungen"
+  "Glossary": "Begriffe und Abkürzungen",
+  "Installation": "Installation",
+  "Server management": "Serververwaltung",
+  "Updates": "Updates",
+  "Development": "Entwicklung",
+  "Using the database": "Datenbank verwenden",
+  "Maintenance": "Wartung",
+  "Using the API": "API verwenden"
 }
