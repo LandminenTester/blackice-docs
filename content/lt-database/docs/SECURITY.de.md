@@ -6,6 +6,10 @@ Autoritative Datenzugriffe gehören auf den Spielserver. Clientcode darf keine S
 
 Das Secret in `vfs/database.secret` authentifiziert den API-Key. Wer es lesen kann, kann dessen erlaubte Operationen ausführen. Dateirechte auf Spielserverkonto und Administratoren beschränken. Secrets weder committen noch in öffentliches Clientmaterial, Logs oder Screenshots aufnehmen.
 
+## Das SQL-Backend
+
+Mit `"backend": "sql"` gibt es keinen Netzwerkweg und deshalb keine Signatur: Der Connector nutzt den `re.sql`-Provider des Hosts direkt. Die verbleibenden Schutzmaßnahmen sind `allowedNamespaces`, die Bezeichnerregeln, die Parameterbindung für jeden Wert (ein Null wird zum Literal, ein Name stammt nie aus der Anfrage), Grenzen je Operation und die Rechte des **Datenbankkontos hinter dem Alias**: Gib ihm nur, was das Spiel braucht. Wer den Connector aufrufen kann, darf die erlaubten Namespaces nutzen, wie bei der API. Fehlerantworten enthalten nur stabile Codes, nie Treibermeldungen. Einzelheiten und Unterschiede: [SQL-Backend](SQL-BACKEND.md).
+
 ## Netzwerk und Signaturen
 
 `Networking.allowed` beschränkt Ziele exakt, einschließlich Weiterleitungen. HTTPS für entfernte Verbindungen verwenden. Der Connector signiert Anfragen mit HMAC-SHA256 und prüft die signierte Antwort, den Status sowie den Bezug zur Anfrage. Ungültige Antworten werden verworfen. Zeitstempel und Nonces schützen gegen Wiederverwendung; Systemuhr synchron halten.

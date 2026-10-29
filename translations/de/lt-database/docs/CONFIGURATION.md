@@ -18,7 +18,7 @@ Die Konfiguration besteht aus dem Manifest `config.toml` und zwei privaten Datei
 [General]
 description = "lt_database connector"
 author = "LandminenTester"
-version = "0.2.1"
+version = "0.3.0"
 
 [Scripting]
 server_blob = "sv.wasm"
@@ -34,6 +34,8 @@ config_version = "alpha_playtest"
 `enable_vfs = true` ist erforderlich, damit das Bundle seine privaten Dateien lesen kann. `server_blob` muss auf die tatsächlich installierte WASM-Datei zeigen. Den Beispielhost ersetzen; Hostfreigaben werden exakt und ohne Wildcards geprüft, auch nach Weiterleitungen.
 
 ## database.json
+
+Der Connector hat zwei Backends, gewählt über `"backend"`: `"http"` (Standard; dieser Abschnitt) spricht mit lt-database-api, `"sql"` nutzt den `re.sql`-Provider des Hosts mit PostgreSQL oder SQLite und braucht keine API ([SQL-Backend](SQL-BACKEND.md), dort auch die zusätzlichen Felder `sqlAlias`, `sqlDialect` und `destructiveMode`).
 
 ```json
 {
@@ -56,6 +58,13 @@ config_version = "alpha_playtest"
 | `timeoutMs` | `15000` | Zeitlimit pro Anfrage in Millisekunden; 1000 bis 120000. |
 | `maxConcurrent` | `8` | Gleichzeitige Anfragen; 1 bis 64. Weitere warten im Connector. |
 | `allowInsecureHttp` | `false` | Erlaubt HTTP zu entfernten Hosts; nur für vollständig vertrauenswürdige Testnetze. |
+| `backend` | `"http"` | `"http"` oder `"sql"`. Mit `"sql"` werden `url`, `keyId`, `secretFile` und `allowInsecureHttp` ignoriert. |
+
+SQL-Variante (siehe [SQL-Backend](SQL-BACKEND.md)):
+
+```json
+{ "backend": "sql", "sqlAlias": "players", "sqlDialect": "auto", "destructiveMode": "deny", "allowedNamespaces": ["mygame"] }
+```
 
 Eine fehlende oder ungültige Datei lässt das Bundle geladen, aber Aufrufe scheitern mit `not_configured`. `lt-db-status` nennt den Grund.
 

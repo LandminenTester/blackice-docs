@@ -29,6 +29,14 @@ protocol.
 | Leaking the secret to players | The secret lives only in the private `vfs/` folder, which is not streamed to clients; nothing sensitive is compiled into the WASM |
 | Information in logs | Calls are logged with id and error type only. Payloads, values and the secret are never logged |
 
+## The SQL backend
+
+With `"backend": "sql"` there is no network hop and therefore no signing: the connector uses the host's `re.sql` provider directly.
+The remaining defences are `allowedNamespaces`, the identifier rules, parameter binding for every value (a null becomes a literal, a
+name never comes from the request), per-operation limits and the privileges of the **database account behind the alias**: give it only
+what the game needs. Anyone who can call the connector can use the allowed namespaces, as with the API. Error answers contain stable
+codes only, never driver messages. Details and differences: [SQL backend](SQL-BACKEND.md).
+
 ## What it does not protect against
 
 * **A malicious bundle on the same game server.** It can call the connector for any allowed namespace. Install only bundles you
@@ -41,7 +49,7 @@ protocol.
 
 ## Cryptography notes
 
-HMAC-SHA-256, SHA-256, base64url and the JSON handling are small managed implementations in [`sh/Pure`](https://github.com/LandminenTester/lt-database/tree/33fa02c95150cd4dcf1020329618b4b4363fcceb/sh/Pure), because the
+HMAC-SHA-256, SHA-256, base64url and the JSON handling are small managed implementations in [`sh/Pure`](https://github.com/LandminenTester/lt-database/tree/1e558d4a266c0d0152ec64ae0f930ca63b4b7fdd/sh/Pure), because the
 sandbox does not document platform cryptography. They are tested against `System.Security.Cryptography` for every input length
 around the block boundaries, against RFC 4231 test cases, and against the API's published signing vectors. Nonces are unique per
 request (counter, clock and random bytes mixed); they do not need to be secret. If the game server's clock is wrong, the connector

@@ -32,7 +32,7 @@
   },
   "lt-database": {
     "repository": "LandminenTester/lt-database",
-    "commit": "33fa02c95150cd4dcf1020329618b4b4363fcceb",
+    "commit": "1e558d4a266c0d0152ec64ae0f930ca63b4b7fdd",
     "files": [
       "LICENSE",
       "NOTICE.md",
@@ -44,6 +44,7 @@
       "docs/OPERATIONS.md",
       "docs/REFERENCE.md",
       "docs/SECURITY.md",
+      "docs/SQL-BACKEND.md",
       "docs/USAGE.md",
       "examples/consumer/PlayerPreferences.cs",
       "examples/smoke/README.md"

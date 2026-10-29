@@ -11,6 +11,8 @@ API und Datenbank müssen erreichbar sein. In `cfg/server.cfg` zuerst `start lt_
 | `lt-db-reload` | JSON und Secret ohne Bundle-Neustart neu laden |
 | `restart lt_database` | Nach einer Manifest- oder WASM-Änderung neu starten |
 
+Zwischen den Backends `http` und `sql` wechseln: `backend` (und die zugehörigen Felder) in `database.json` ändern, `lt-db-reload` ausführen, `lt-db-status` prüfen und die Bundles neu starten, die Schemas deklariert haben ([SQL-Backend](SQL-BACKEND.md)).
+
 ## Fehler systematisch eingrenzen
 
 | Code oder Symptom | Prüfen und beheben |
@@ -24,6 +26,8 @@ API und Datenbank müssen erreichbar sein. In `cfg/server.cfg` zuerst `start lt_
 | `unknown_table` / `namespace_unknown` | Schema an dieser API zuerst erfolgreich synchronisieren. |
 | `constraint_violation` | Eindeutige Schlüssel und Pflichtwerte prüfen; Anfrage nicht blind wiederholen. |
 | `busy` / `rate_limited` | Last reduzieren, zeitversetzt versuchen und API-Limits prüfen. |
+| `database_error` / `database_timeout` (Backend `sql`) | Alias fehlt oder ist falsch in der `config.toml`, die Datenbank ist nicht erreichbar oder dem Konto fehlen Rechte (einmalig `CREATE`, für den Schema-Sync DDL-Rechte). `lt-db-health`, das Serverlog (Operation, Ausnahmetyp, zugeordneter Code) und das [SQL-Backend](SQL-BACKEND.md) prüfen. |
+| `conflict_retry` (Backend `sql`, SQLite) | Ein anderer Schreiber hält die einzige Schreibsperre von SQLite; den Aufruf wiederholen. |
 | `unavailable` | Schutzschalter nach Transportfehlern; Ursache beheben, automatische Erholung oder Reload abwarten. |
 | `write_buffer_full` | Warteschlange und Datenbank prüfen, Flush überwachen. Neue Änderung wurde nicht angenommen. |
 | `write_buffer_unavailable` | Journal-Pfad, Schreibrechte und freien Speicher prüfen. |

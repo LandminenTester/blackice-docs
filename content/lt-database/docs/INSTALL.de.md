@@ -6,6 +6,8 @@ Du benötigst einen BlackICE-Spielserver mit Bundle-Unterstützung und eine erre
 
 Wenn du noch keine API betreibst, beginne mit dem [gemeinsamen Schnellstart](../../database-quickstart.md). Für entfernte Verbindungen HTTPS verwenden.
 
+Für das optionale [SQL-Backend](SQL-BACKEND.md) statt der API brauchst du einen Host mit replay.blackice SDK **1.3.0** oder neuer und einen Datenbank-Alias (PostgreSQL oder SQLite) in der `config.toml` des Bundles.
+
 ## 1. Release herunterladen
 
 Lade `lt_database-<version>.zip` von den [Releases](https://github.com/LandminenTester/lt-database/releases/latest). Es enthält `config.toml`, den Servercode `sv.wasm` und öffentliche Konfigurationsbeispiele. Es gibt keinen Client-Teil. Alternativ [selbst bauen](BUILD.md).

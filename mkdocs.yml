@@ -108,6 +108,7 @@
               "Database pair quickstart": "Schnellstart: Datenbank und Connector",
               "Install": "Installation",
               "Configuration": "Konfiguration",
+              "SQL backend (re.sql)": "SQL-Backend (re.sql)",
               "Usage and examples": "Nutzung und Beispiele",
               "C# exports and builders": "C#-Exporte und Builder",
               "Player preferences walkthrough": "Spielereinstellungen: Praxisbeispiel",
@@ -247,6 +248,9 @@
             },
             {
               "C# exports and builders": "lt-database/docs/REFERENCE.md"
+            },
+            {
+              "SQL backend (re.sql)": "lt-database/docs/SQL-BACKEND.md"
             }
           ]
         },

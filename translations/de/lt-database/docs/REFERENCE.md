@@ -57,9 +57,9 @@ Alle Builder erzeugen JSON-Text und maskieren Werte.
 
 ## Operationen und Wiederholung
 
-`health`, `schema.sync`, `schema.describe`, `find`, `count`, `delete`, `flush`, `insert`, `upsert`, `update`. Außer Health benötigt jede Nutzlast einen erlaubten `namespace`.
+`health`, `schema.sync`, `schema.describe`, `find`, `count`, `delete`, `flush`, `insert`, `upsert`, `update`, `mutation.execute`, `mutation.receipt`. `delete` und `mutation.execute` werden nie automatisch wiederholt (`mutation.execute` wird über `mutation.receipt` wiederhergestellt). Außer Health benötigt jede Nutzlast einen erlaubten `namespace`.
 
-Der Connector wiederholt Transportfehler und unsignierte 502/503/504-Antworten maximal dreimal mit 300 und 600 ms Abstand. Bei 401 erfolgt einmal Zeitsynchronisierung und ein weiterer Versuch. Authentische signierte API-Fehler werden nicht automatisch wiederholt. Insert, Upsert und Update benötigen für Transportwiederholungen einen `idempotencyKey`; der Helper ergänzt ihn bei Insert und Upsert.
+Mit dem Backend `sql` laufen dieselben Operationen über `re.sql` und der Connector wiederholt nichts; die wenigen Unterschiede (kein Write-behind, keine Signatur, Destruktiv-Modus, Datenbanken) stehen im [SQL-Backend](SQL-BACKEND.md). Nur beim Backend `http` wiederholt der Connector Transportfehler und unsignierte 502/503/504-Antworten maximal dreimal mit 300 und 600 ms Abstand. Bei 401 erfolgt einmal Zeitsynchronisierung und ein weiterer Versuch. Authentische signierte API-Fehler werden nicht automatisch wiederholt. Insert, Upsert und Update benötigen für Transportwiederholungen einen `idempotencyKey`; der Helper ergänzt ihn bei Insert und Upsert.
 
 Grenzen: Nutzlast maximal 1.000.000 Zeichen, bis zu 512 wartende Aufträge, Parallelität gemäß `maxConcurrent`. Fünf Transportfehler hintereinander öffnen den Schutzschalter für 15 Sekunden.
 
@@ -71,7 +71,7 @@ Connector-Fehler: `not_configured`, `unknown_operation`, `invalid_request`, `inv
 
 | Befehl | Aufgabe |
 | --- | --- |
-| `lt-db-status` | URL, Key-ID, Namespaces, Warteschlange, aktive Anfragen und Zeitversatz; nie das Secret |
+| `lt-db-status` | Backend (`http` oder `sql`), Ziel (URL und Key-ID, oder Alias, Dialekt und Destruktiv-Modus), Namespaces, Warteschlange, aktive Anfragen und Zeitversatz; nie das Secret |
 | `lt-db-health` | Signierter Verbindungstest bis zur Datenbank |
 | `lt-db-reload` | Private Dateien neu laden, Schutzschalter zurücksetzen und Zeit abgleichen |
 

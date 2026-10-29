@@ -40,6 +40,7 @@
   * [Usage and examples](lt-database/docs/USAGE.md)
   * [Player preferences walkthrough](lt-database/docs/EXAMPLES.md)
   * [C# exports and builders](lt-database/docs/REFERENCE.md)
+  * [SQL backend (re.sql)](lt-database/docs/SQL-BACKEND.md)
 * **Maintenance**
   * [Runtime smoke test](lt-database/examples/smoke/README.md)
   * [Operations and troubleshooting](lt-database/docs/OPERATIONS.md)

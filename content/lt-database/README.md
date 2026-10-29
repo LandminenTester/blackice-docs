@@ -9,6 +9,9 @@ every request and verifying every answer.
 your server bundle ──re.Exports──▶ lt_database (this bundle) ──HTTPS, HMAC-signed──▶ lt-database-api ──▶ PostgreSQL | MySQL | MongoDB
 ```
 
+Since 0.3.0 the connector can alternatively use the host's own `re.sql` provider (PostgreSQL or SQLite, SDK 1.3.0 or newer) without
+the API, selected with `"backend": "sql"` in `vfs/database.json`. Consumers see no difference; see [SQL backend](docs/SQL-BACKEND.md).
+
 The BlackICE sandbox can only open HTTP connections to hosts listed in a bundle's manifest and has no database driver or
 writable database file. This bundle plus the API is the bridge.
 
@@ -72,8 +75,8 @@ public static class App
 | [Security](docs/SECURITY.md) | Trust model, what is protected how, limits of the design |
 | [Build and contribute](docs/BUILD.md) | Toolchain, building the WASM bundle, tests, releases |
 
-Examples that compile: [`examples/consumer`](https://github.com/LandminenTester/lt-database/tree/33fa02c95150cd4dcf1020329618b4b4363fcceb/examples/consumer) (a small consumer bundle) and
-[`examples/smoke`](https://github.com/LandminenTester/lt-database/tree/33fa02c95150cd4dcf1020329618b4b4363fcceb/examples/smoke) (`db-smoke`, a 38-step test of every function that you can run on your own server).
+Examples that compile: [`examples/consumer`](https://github.com/LandminenTester/lt-database/tree/1e558d4a266c0d0152ec64ae0f930ca63b4b7fdd/examples/consumer) (a small consumer bundle) and
+[`examples/smoke`](https://github.com/LandminenTester/lt-database/tree/1e558d4a266c0d0152ec64ae0f930ca63b4b7fdd/examples/smoke) (`db-smoke`, a 38-step test of every function that you can run on your own server).
 
 ## Status
 
