@@ -3,7 +3,7 @@
 ## Prerequisites
 
 * A PostgreSQL, MySQL/MariaDB or MongoDB server that the API host can reach (and nobody else).
-* Two database accounts as described in [SECURITY.md](SECURITY.md#database-privileges); scripts in [`docker/grants`](https://github.com/LandminenTester/lt-database-api/tree/af0736fc5055d62d795a9c258c227cac6552e73a/docker/grants).
+* Two database accounts as described in [SECURITY.md](SECURITY.md#database-privileges); scripts in [`docker/grants`](https://github.com/LandminenTester/lt-database-api/tree/0e1d1a0189d26cd610e76b89b9d0b1f0b9388006/docker/grants).
 * A TLS certificate, or a reverse proxy that provides one. Plain HTTP is only for loopback and local testing.
 * A random secret per caller: `openssl rand -base64 48`.
 

@@ -61,7 +61,7 @@ Alle Builder erzeugen JSON-Text und maskieren Werte.
 
 Mit dem Backend `sql` laufen dieselben Operationen über `re.sql` und der Connector wiederholt nichts; die wenigen Unterschiede (kein Write-behind, keine Signatur, Destruktiv-Modus, Datenbanken) stehen im [SQL-Backend](SQL-BACKEND.md). Nur beim Backend `http` wiederholt der Connector Transportfehler und unsignierte 502/503/504-Antworten maximal dreimal mit 300 und 600 ms Abstand. Bei 401 erfolgt einmal Zeitsynchronisierung und ein weiterer Versuch. Authentische signierte API-Fehler werden nicht automatisch wiederholt. Insert, Upsert und Update benötigen für Transportwiederholungen einen `idempotencyKey`; der Helper ergänzt ihn bei Insert und Upsert.
 
-Grenzen: Nutzlast maximal 1.000.000 Zeichen, bis zu 512 wartende Aufträge, Parallelität gemäß `maxConcurrent`. Fünf Transportfehler hintereinander öffnen den Schutzschalter für 15 Sekunden.
+Grenzen: Nutzlast maximal 1.000.000 Zeichen, bis zu 512 wartende Aufträge, Parallelität gemäß `maxConcurrent` beim Backend `http`; das Backend `sql` führt einen Aufruf nach dem anderen aus (siehe [Gleichzeitigkeit](SQL-BACKEND.md#gleichzeitigkeit)). Fünf Transportfehler hintereinander öffnen den Schutzschalter für 15 Sekunden.
 
 ## Zustände und Diagnose
 

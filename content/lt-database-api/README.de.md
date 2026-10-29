@@ -1,6 +1,6 @@
 # lt-database-api
 
-Die API ist ein selbst gehosteter HTTP-Dienst vor PostgreSQL, MySQL/MariaDB oder MongoDB. Sie prüft signierte Anfragen, Berechtigungen und Datenstrukturen und führt danach Datenbankoperationen aus. Der BlackICE-Connector **lt_database** nutzt diese Schnittstelle. Andere Clients können das dokumentierte Signaturprotokoll ebenfalls implementieren. Das Server Panel ist eine separate Ressource.
+Die API ist ein selbst gehosteter HTTP-Dienst vor PostgreSQL, MySQL/MariaDB oder MongoDB. Sie prüft signierte Anfragen, Berechtigungen und Datenstrukturen und führt danach Datenbankoperationen aus. Der BlackICE-Connector **lt_database** nutzt diese Schnittstelle. Seit SDK 1.3.0 kann er PostgreSQL und SQLite alternativ direkt über den `re.sql`-Provider des Hosts erreichen; wann die API die bessere Wahl ist, steht in [API oder re.sql](docs/BUNDLE-INTEGRATION.md#api-oder-resql-welches). Andere Clients können das dokumentierte Signaturprotokoll ebenfalls implementieren. Das Server Panel ist eine separate Ressource.
 
 ## Schnell beginnen
 

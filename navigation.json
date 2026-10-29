@@ -35,6 +35,7 @@
       "Overview": "lt-database/README.md",
       "Database pair quickstart": "database-quickstart.md",
       "Install": "lt-database/docs/INSTALL.md",
+      "Choose backend and settings": "lt-database/docs/USE-CASES.md",
       "Configuration": "lt-database/docs/CONFIGURATION.md"
     },
     "Using the database": {

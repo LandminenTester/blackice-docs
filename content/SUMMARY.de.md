@@ -35,6 +35,7 @@
   * [Übersicht](lt-database/README.de.md)
   * [Schnellstart: Datenbank und Connector](database-quickstart.de.md)
   * [Installation](lt-database/docs/INSTALL.de.md)
+  * [Backend und Einstellungen wählen](lt-database/docs/USE-CASES.de.md)
   * [Konfiguration](lt-database/docs/CONFIGURATION.de.md)
 * **Datenbank verwenden**
   * [Nutzung und Beispiele](lt-database/docs/USAGE.de.md)

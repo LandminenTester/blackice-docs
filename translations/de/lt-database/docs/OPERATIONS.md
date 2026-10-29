@@ -49,4 +49,4 @@ Vor Migrationen Schreibzugriffe anhalten und Warteschlangen leeren; `remaining: 
 
 ## Last und Konsistenz
 
-Maximal 512 wartende Connector-Aufträge; `maxConcurrent` begrenzt aktive HTTP-Anfragen. Abfragen mit `limit`, geeigneten Indizes und stabiler Sortierung begrenzen. Keine blockierenden Warteschleifen im Spieltick verwenden. Bei Queue-Modus zwischen angenommenen und tatsächlich angewendeten Änderungen unterscheiden.
+Maximal 512 wartende Connector-Aufträge; `maxConcurrent` begrenzt aktive HTTP-Anfragen (Backend `http`); das Backend `sql` führt einen Aufruf nach dem anderen aus, daher Abfragen kurz halten (kleines `limit`, indizierte Filter) und Inserts bündeln. Abfragen mit `limit`, geeigneten Indizes und stabiler Sortierung begrenzen. Keine blockierenden Warteschleifen im Spieltick verwenden. Bei Queue-Modus zwischen angenommenen und tatsächlich angewendeten Änderungen unterscheiden.

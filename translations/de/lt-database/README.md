@@ -11,7 +11,8 @@ Eigenes Server-Bundle → lt_database → lt-database-api → Datenbank
 ```
 
 Seit 0.3.0 kann der Connector alternativ den `re.sql`-Provider des Hosts nutzen (PostgreSQL oder SQLite, SDK 1.3.0 oder neuer), ganz ohne API. Das wird mit
-`"backend": "sql"` in `vfs/database.json` gewählt. Consumer merken keinen Unterschied; siehe [SQL-Backend](docs/SQL-BACKEND.md).
+`"backend": "sql"` in `vfs/database.json` gewählt. Consumer merken keinen Unterschied; siehe [SQL-Backend](docs/SQL-BACKEND.md). Welches Backend zu welcher Situation passt, steht in
+[Backend und Einstellungen wählen](docs/USE-CASES.md).
 
 ## Der Einstieg
 

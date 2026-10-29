@@ -49,7 +49,7 @@ codes only, never driver messages. Details and differences: [SQL backend](SQL-BA
 
 ## Cryptography notes
 
-HMAC-SHA-256, SHA-256, base64url and the JSON handling are small managed implementations in [`sh/Pure`](https://github.com/LandminenTester/lt-database/tree/1e558d4a266c0d0152ec64ae0f930ca63b4b7fdd/sh/Pure), because the
+HMAC-SHA-256, SHA-256, base64url and the JSON handling are small managed implementations in [`sh/Pure`](https://github.com/LandminenTester/lt-database/tree/8cba6d97f3dfcd732ab3865a42ddc7abf49f163f/sh/Pure), because the
 sandbox does not document platform cryptography. They are tested against `System.Security.Cryptography` for every input length
 around the block boundaries, against RFC 4231 test cases, and against the API's published signing vectors. Nonces are unique per
 request (counter, clock and random bytes mixed); they do not need to be secret. If the game server's clock is wrong, the connector

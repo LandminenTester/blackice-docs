@@ -32,7 +32,7 @@
   },
   "lt-database": {
     "repository": "LandminenTester/lt-database",
-    "commit": "1e558d4a266c0d0152ec64ae0f930ca63b4b7fdd",
+    "commit": "8cba6d97f3dfcd732ab3865a42ddc7abf49f163f",
     "files": [
       "LICENSE",
       "NOTICE.md",
@@ -46,13 +46,14 @@
       "docs/SECURITY.md",
       "docs/SQL-BACKEND.md",
       "docs/USAGE.md",
+      "docs/USE-CASES.md",
       "examples/consumer/PlayerPreferences.cs",
       "examples/smoke/README.md"
     ]
   },
   "lt-database-api": {
     "repository": "LandminenTester/lt-database-api",
-    "commit": "af0736fc5055d62d795a9c258c227cac6552e73a",
+    "commit": "0e1d1a0189d26cd610e76b89b9d0b1f0b9388006",
     "files": [
       "LICENSE",
       "README.md",

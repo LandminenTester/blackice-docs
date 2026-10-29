@@ -67,6 +67,8 @@ public static class App
 
 | Guide | What it covers |
 |---|---|
+| [Choosing a backend and settings](docs/USE-CASES.md) | Typical situations (single server, shared database, MySQL/MongoDB, tests), which backend and settings fit, pros and cons |
+| [SQL backend](docs/SQL-BACKEND.md) | The `re.sql` alternative: configuration, differences to the API, schema sync, mutation receipts, concurrency, verification |
 | [Install](docs/INSTALL.md) | Prerequisites, installing the bundle, the two `vfs` files, starting it, checking it, a local Docker test setup |
 | [Configuration](docs/CONFIGURATION.md) | Every setting of `database.json`, the manifest, namespaces, secrets, several environments |
 | [Usage and examples](docs/USAGE.md) | Concepts, every helper call, filters, paging, counters, per-player data, error handling, write-behind, recipes |
@@ -75,8 +77,8 @@ public static class App
 | [Security](docs/SECURITY.md) | Trust model, what is protected how, limits of the design |
 | [Build and contribute](docs/BUILD.md) | Toolchain, building the WASM bundle, tests, releases |
 
-Examples that compile: [`examples/consumer`](https://github.com/LandminenTester/lt-database/tree/1e558d4a266c0d0152ec64ae0f930ca63b4b7fdd/examples/consumer) (a small consumer bundle) and
-[`examples/smoke`](https://github.com/LandminenTester/lt-database/tree/1e558d4a266c0d0152ec64ae0f930ca63b4b7fdd/examples/smoke) (`db-smoke`, a 38-step test of every function that you can run on your own server).
+Examples that compile: [`examples/consumer`](https://github.com/LandminenTester/lt-database/tree/8cba6d97f3dfcd732ab3865a42ddc7abf49f163f/examples/consumer) (a small consumer bundle) and
+[`examples/smoke`](https://github.com/LandminenTester/lt-database/tree/8cba6d97f3dfcd732ab3865a42ddc7abf49f163f/examples/smoke) (`db-smoke`, a 38-step test of every function, and `db-smoke-mutation`, 29 steps for atomic mutation receipts; both run on your own server).
 
 ## Status
 
@@ -84,6 +86,7 @@ Examples that compile: [`examples/consumer`](https://github.com/LandminenTester/
   checked against `System.Security.Cryptography`, RFC 4231 and the API's published test vectors.
 * **Tested in a real BlackICE server** against PostgreSQL 17, MySQL 8.4 and MongoDB 8 through the API: all 38 steps of
   `db-smoke` pass on each, and a real consumer stores per-player settings through it.
+* The `sql` backend (0.3.0) passes the same 38 steps on SQLite and on PostgreSQL 17, plus the 29-step mutation receipt scenario, in a real BlackICE server.
 * Not tested: several game servers at once, TLS between bundle and API (plain loopback HTTP was used), key rotation in a running
   server, MariaDB, write-behind from inside a game server (the API side is tested, the helper side by unit tests).
 

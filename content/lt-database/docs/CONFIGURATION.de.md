@@ -56,7 +56,7 @@ Der Connector hat zwei Backends, gewählt über `"backend"`: `"http"` (Standard;
 | `secretFile` | `database.secret` | Datei innerhalb des VFS; absolute Pfade und `..` sind verboten. |
 | `allowedNamespaces` | erforderlich | Mindestens ein Namespace; `"*"` erlaubt lokal alle. Die API-Rechte gelten zusätzlich. |
 | `timeoutMs` | `15000` | Zeitlimit pro Anfrage in Millisekunden; 1000 bis 120000. |
-| `maxConcurrent` | `8` | Gleichzeitige Anfragen; 1 bis 64. Weitere warten im Connector. |
+| `maxConcurrent` | `8` | Gleichzeitige Anfragen; 1 bis 64. Weitere warten im Connector. Nur das Backend `http` nutzt es: Das Backend `sql` führt immer einen Aufruf nach dem anderen aus. |
 | `allowInsecureHttp` | `false` | Erlaubt HTTP zu entfernten Hosts; nur für vollständig vertrauenswürdige Testnetze. |
 | `backend` | `"http"` | `"http"` oder `"sql"`. Mit `"sql"` werden `url`, `keyId`, `secretFile` und `allowInsecureHttp` ignoriert. |
 

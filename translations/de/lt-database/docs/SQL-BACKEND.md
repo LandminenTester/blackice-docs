@@ -15,6 +15,8 @@ welches Backend aktiv ist.
 
 Pro Bundle-Installation **ein** Backend wählen. Gemischter Betrieb je Namespace wird nicht unterstützt.
 
+Unsicher, welches Backend passt? [Backend und Einstellungen wählen](USE-CASES.md) beschreibt typische Situationen, passende Einstellungen und Abwägungen.
+
 ## Backend wählen
 
 `vfs/database.json`:
@@ -37,7 +39,8 @@ Pro Bundle-Installation **ein** Backend wählen. Gemischter Betrieb je Namespace
 | `sqlAlias` | erforderlich für `sql` | Name eines `[Database.<alias>]`-Eintrags in der `config.toml` des Bundles (Buchstaben, Ziffern, `_`, `-`, höchstens 64 Zeichen). Host, Benutzer, Passwort oder Dateipfad stehen dort und sind für den Bundle-Code nie sichtbar. |
 | `sqlDialect` | `"auto"` | `"auto"` (fragt die Datenbank: `sqlite_version()` antwortet bei SQLite, alles andere gilt als PostgreSQL), `"postgres"` oder `"sqlite"`. Explizit setzen, wenn keine Erkennung gewünscht ist. |
 | `destructiveMode` | `"deny"` | Was `schema.sync` mit Tabellen und Spalten tun darf, die aus der Deklaration verschwunden sind: `"deny"`, `"quarantine"` oder `"apply"`, siehe [Schema-Sync](#schema-sync). |
-| `allowedNamespaces`, `timeoutMs`, `maxConcurrent` | wie bei `http` | Gleiche Bedeutung. `timeoutMs` wird zum SQL-Befehlszeitlimit, auf ganze Sekunden aufgerundet und bei 30 gedeckelt (Grenze von `re.sql`). |
+| `allowedNamespaces`, `timeoutMs` | wie bei `http` | Gleiche Bedeutung. `timeoutMs` wird zum SQL-Befehlszeitlimit, auf ganze Sekunden aufgerundet und bei 30 gedeckelt (Grenze von `re.sql`). |
+| `maxConcurrent` | `8` | Wird akzeptiert, wirkt mit `sql` aber nicht über 1 hinaus: Aufrufe laufen nacheinander, siehe [Gleichzeitigkeit](#gleichzeitigkeit). |
 
 Mit `"backend": "sql"` werden `url`, `keyId`, `secretFile` und `allowInsecureHttp` ignoriert; `[Networking] allowed` ist nicht nötig. Jede ungültige
 Kombination lässt das Bundle geladen, beantwortet aber jeden Aufruf mit `not_configured` (siehe `lt-db-status`). Eine falsche Datei fällt so nie auf
@@ -95,6 +98,7 @@ Alles, was ein Consumer beobachten kann:
 | `health` | `{"status":"ok","provider":"postgres"\|"sqlite","database":true\|false,"writeBuffer":{…deaktiviert…}}`; `provider` ist bei `auto` vor der ersten Verbindung `unknown`. |
 | Datenbanken | Nur PostgreSQL und SQLite. MySQL, MariaDB und MongoDB bleiben beim Backend `http`. `mutation.*` gibt es auf beiden Engines. |
 | Zeit- und Zahlenformate | Gleiches JSON. SQLite speichert `decimal` als `NUMERIC` und liefert eine Zahl ohne Nachkomma-Nullen (`12.5` statt `12.50`). |
+| Gleichzeitigkeit | Aufrufe eines Bundles laufen strikt nacheinander (das Backend `http` führt bis zu `maxConcurrent` gleichzeitig aus), siehe [Gleichzeitigkeit](#gleichzeitigkeit). |
 | Anfragegröße | Jede Operation läuft auf einer eigenen Verbindung (je Aufruf geöffnet und geschlossen); ein Ergebnis wird vollständig in den Speicher gelesen und durch die 1000-Zeilen-Grenze begrenzt. |
 
 ### Typen
@@ -163,6 +167,23 @@ Hinweise zu den Engines: PostgreSQL nutzt `READ COMMITTED` und `SELECT … FOR U
 Schreiber; die Reservierung nimmt die Schreibsperre, ein zweiter Schreiber wartet (oder scheitert je nach Busy-Timeout des Hosts mit
 `conflict_retry`). Belege für MySQL und MongoDB gibt es hier nicht (und MongoDB-Belege unterstützt auch die API nicht).
 
+## Gleichzeitigkeit
+
+Der Host führt die SQL-Befehle eines Alias nacheinander aus. Wären zwei Transaktionen gleichzeitig offen und die eine wartete auf eine Zeilensperre
+der anderen, würde der wartende Befehl den nächsten Befehl der anderen Transaktion bis zum Befehlszeitlimit blockieren: ein selbst verursachter
+Stillstand, der als `database_timeout` endete. Das wurde mit zwei parallelen `mutation.execute`-Aufrufen für denselben Effekt auf PostgreSQL
+nachgestellt. Der Connector führt deshalb **einen Aufruf gleichzeitig pro Bundle** aus; weitere Aufrufe warten in der Connector-Warteschlange
+(512 Einträge, darüber `busy`) und werden der Reihe nach beantwortet.
+
+Praktisch heißt das:
+
+* Eine langsame Abfrage (zum Beispiel `find` über eine große Tabelle) verzögert die dahinter wartenden Aufrufe. `limit` klein halten und Filterspalten indizieren.
+* `maxConcurrent` wird aus Kompatibilitätsgründen akzeptiert und wirkt mit `sql` nicht über 1 hinaus.
+* Mehrere **Gameserver** auf einer gemeinsamen PostgreSQL-Datenbank bleiben sicher: Die Datenbank selbst vermittelt zwischen ihnen (Advisory-Lock
+  für `schema.sync`, die eindeutige Beleg-Reservierung für `mutation.execute`).
+* Der Durchsatz entspricht den Roundtrips pro Sekunde einer einzelnen Verbindung. Für hunderte Schreibvorgänge pro Sekunde gebündelte
+  `insert`-Aufrufe (bis 1000 Zeilen) oder das Backend `http` mit Write-behind nutzen.
+
 ## Betrieb und Sicherheitshinweise
 
 * Der erste Aufruf nach dem Start (oder `lt-db-reload`) legt `_ldb_schema` und `_ldb_mutation_receipts` mit `CREATE TABLE IF NOT EXISTS` an; das
@@ -196,10 +217,23 @@ Automatisch geprüft (`tests/Bundle.Tests`, über 100 Tests):
 * das erzeugte SQL gegen eine **echte SQLite-Engine** (Typen, Filter, Paging, Upsert, Constraint-Fehler, Neuaufbau mit Daten und Indizes,
   Savepoint-Verhalten).
 
-Auf einem echten BlackICE-Server (Docker, `re.sql`-Host) geprüft: Das 38-Schritte-Smoke-Bundle aus `examples/smoke` besteht mit `"backend": "sql"` auf
-einem SQLite-Alias 38/38 und auf PostgreSQL 17 ebenfalls 38/38 (Parameterbindung, Transaktionen über awaitete Befehle, Schema-Sync und Neuaufbauten,
-Typabbildung). SQLite-Hinweis: Die Sandbox des Hosts verweigert `pragma_table_info`; der Connector liest Spaltennamen deshalb aus `SELECT * … LIMIT 0`.
+Auf einem echten BlackICE-Server (Docker, `re.sql`-Host) mit den Bundles aus `examples/smoke` geprüft, auf einem SQLite-Alias und auf PostgreSQL 17:
 
-**Vom Smoke-Bundle noch nicht abgedeckt:** `mutation.execute` / `mutation.receipt` (per Unit-Test und auf echtem SQLite geprüft, aber ohne
-Laufzeitszenario in einem BlackICE-Host), das Verhalten von `CommandTimeout` und gleichzeitige Schreiber. `mutation.*`-Consumer bis dahin beim Backend
-`http` lassen.
+| Szenario | Schritte | SQLite | PostgreSQL 17 |
+|---|---|---|---|
+| `db-smoke`: CRUD, Filter, Paging, Constraints, Schema-Sync und Neuaufbauten, Typabbildung, Namespace-Isolation | 38 | 38/38 | 38/38 |
+| `db-smoke-mutation`: `mutation.execute` / `mutation.receipt`, siehe unten | 29 | 29/29 | 29/29 |
+
+Das Mutation-Szenario deckt ab: Upsert, Update und Delete mit Beleg; Wiederholung desselben Effekts (wird nur einmal angewendet); Beleg-Konflikte
+bei anderer Mutation, Operation oder anderem Fingerprint; Beleg-Abfrage (gefunden, nicht gefunden, Konflikt); `no_match`; ein Update, das mehrere
+Zeilen träfe (`multiple_rows`, als fehlgeschlagener Beleg gespeichert, nichts verändert); eine Constraint-Verletzung als dauerhafter
+`failed`-Beleg, der bei Wiederholung erneut geliefert wird; Ablehnung von `all=true`, fremdem Namespace, doppelten Schlüsseln, falschem Fingerprint
+und zusätzlichen Umschlagfeldern; zwei parallele Ausführungen desselben Effekts (genau einmal angewendet; auf SQLite darf der wartende Aufruf
+`conflict_retry` antworten).
+
+Erkenntnisse der Laufzeittests, die den Code geprägt haben: Die Sandbox von SQLite verweigert `pragma_table_info`, deshalb stammen Spaltennamen aus
+`SELECT * … LIMIT 0`; und der Host führt die Befehle eines Alias nacheinander aus, weshalb Aufrufe serialisiert werden
+([Gleichzeitigkeit](#gleichzeitigkeit)).
+
+Nicht abgedeckt: das Ablaufen von `CommandTimeout` unter Last, mehrere Gameserver gegen eine Datenbank und der Storage-Adapter von `lt-core` im
+Modus `sql` (er nutzt nur die öffentlichen, identischen Exporte, wurde aber noch nicht ausgeführt).

@@ -109,6 +109,7 @@
               "Install": "Installation",
               "Configuration": "Konfiguration",
               "SQL backend (re.sql)": "SQL-Backend (re.sql)",
+              "Choose backend and settings": "Backend und Einstellungen w\u00e4hlen",
               "Usage and examples": "Nutzung und Beispiele",
               "C# exports and builders": "C#-Exporte und Builder",
               "Player preferences walkthrough": "Spielereinstellungen: Praxisbeispiel",
@@ -232,6 +233,9 @@
             },
             {
               "Install": "lt-database/docs/INSTALL.md"
+            },
+            {
+              "Choose backend and settings": "lt-database/docs/USE-CASES.md"
             },
             {
               "Configuration": "lt-database/docs/CONFIGURATION.md"
